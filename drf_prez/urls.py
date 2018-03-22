@@ -16,6 +16,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from demo.views import naive
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^naive_view/', naive.naive_view),
 ]
