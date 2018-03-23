@@ -44,6 +44,98 @@ from demo.views import naive
 
 ## Using DRF, simple CRUD, model based
 
+### APIViews
+
+Why: Request with addtl methods. Response with content negotiation.
+
+```views/rest_view.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+
+class ListUsers(APIView):
+
+    def get(self, request, format=None):
+        """
+        Return a list of all users.
+        """
+        print("#############")
+        print('request.data ~ request.POST + request.FILES')
+        print(request.data)
+        print('query_params == request.GET')
+        print(request.query_params)
+        print("#############")
+        usernames = [user.username for user in get_user_model().objects.all()]
+        return Response(usernames)
+```
+
+urls.py
+```python
+from demo.views.rest_view import ListUsers
+
+(...)
+
+    url(r'^rest/list_users/', ListUsers.as_view()),
+```
+
+Authentication and Permission framework
+
+#### Authentication
+settings.py
+```python
+INSTALLED_APPS = (
+    ...
+    'rest_framework.authtoken'
+)
+```
+```python
+python manage.py migrate
+```
+
+```views/rest_view.py
+from rest_framework import authentication
+
+class ListUsers(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+```
+
+--> Why a tuple? Because methods are tried one after the other until one works
+--> Nothing changes?
+
+```views/rest_view.py
+    def get(self, request, format=None):
+        print(request.user)
+```
+
+--> We know have a user
+
+#### Permissions
+
+```views/rest_view.py
+from rest_framework import authentication, permissions
+
+class ListUsers(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+```
+
+--> side effect that I don't like: AnonymousUser is authenticated :(
+
+```views/rest_view.py
+from rest_framework import authentication, permissions
+
+class ListUsers(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAdminUser,)
+```
+
+--> normal/djangoregular
+--> token
+--> 403
+
+### APIViews
+### APIViews
+
 views/api.py
 ```python
 ```
@@ -57,15 +149,6 @@ urls.py
 * Add custom RO field
 * Custom validation
 * Custom serialization / deserialization
-
-## Authentication
-
-* Tying to the django user model
-
-## Permissions
-
-* Endpoint permission
-* Object level permission
 
 ## Filtering
 
@@ -84,6 +167,15 @@ urls.py
 * list_route/detail_route
 * get_object
 * serializer handling, pagination handling
+
+### Custom authentication
+
+* Tying to the django user model
+
+### Custom permissions
+
+* Endpoint permission
+* Object level permission
 
 ### Sub-resources
 
