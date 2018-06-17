@@ -187,6 +187,38 @@ drf_prez/urls.py
     (...)
 ```
 
+**Let's do boards now**
+
+models/serializers/board_serializer.py
+```python
+from rest_framework import serializers
+
+from demo.models.board import Board
+
+
+class BoardSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Board
+        fields = ('id', 'name', 'owner_id')
+```
+
+views/generic_view.py
+```python
+class BoardListView(generics.ListAPIView):
+    queryset = Board.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
+    serializer_class = BoardSerializer
+```
+
+drf_prez/urls.py
+```python
+    (...)
+    url(r'^generic/boards/$', BoardListView.as_view()),
+    (...)
+```
+
 #### Detail view
 #### Lookup field
 #### Pagination
