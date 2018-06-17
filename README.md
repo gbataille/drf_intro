@@ -238,11 +238,35 @@ class BoardListView(generics.ListAPIView):
         return Board.objects.filter(owner=user)
 ```
 
-#### Detail view
-#### Lookup field
 #### Pagination
+
+views/generic_view.py
+```python
+(...)
+from rest_framework.pagination import PageNumberPagination
+(...)
+
+
+class SmallResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
+
+(...)
+
+class BoardListView(generics.ListAPIView):
+    (...)
+    pagination_class = SmallResultsSetPagination
+    (...)
+```
+
 #### Filtering
 #### Methods to override attributes
+
+**I want to view the user full name in the board API**
+
+#### Detail view
+#### Lookup field
 
 ### Viewset
 
