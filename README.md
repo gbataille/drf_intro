@@ -293,7 +293,29 @@ class BoardListView(generics.ListAPIView):
     filter_fields = ('name',)
     ordering_fields = ('id',)
 ```
+
 #### Detail view
+
+Now I want to access a specific user. A generic view maps to a single URL.
+I need another view/url
+
+views/generic_view.py
+```python
+class UserRetrieveGenericView(generics.RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
+    serializer_class = UserSerializer
+    lookup_field = 'id'
+```
+
+drf_prez/urls.py
+```python
+    (...)
+    url(r'^generic/users/(?P<id>[0-9]+)/$', UserRetrieveGenericView.as_view()),
+    (...)
+```
+
 #### Lookup field
 
 ### Viewset

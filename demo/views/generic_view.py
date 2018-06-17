@@ -23,6 +23,13 @@ class UserListGenericView(generics.ListAPIView):
     serializer_class = UserSerializer
 
 
+class UserRetrieveGenericView(generics.RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
+    serializer_class = UserSerializer
+
+
 class BoardListView(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
