@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
 
 from demo.models.board import Board
 from demo.models.serializers.board_serializer import BoardSerializer
@@ -16,7 +16,10 @@ class UserListGenericView(generics.ListAPIView):
 
 
 class BoardListView(generics.ListAPIView):
-    queryset = Board.objects.all()
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
     serializer_class = BoardSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Board.objects.filter(owner=user)

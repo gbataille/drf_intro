@@ -219,6 +219,25 @@ drf_prez/urls.py
     (...)
 ```
 
+**I see everybody's board - not cool**
+
+
+views/generic_view.py
+```python
+(...)
+from rest_framework.permissions import IsAdminUser, AllowAny
+(...)
+
+class BoardListView(generics.ListAPIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (AllowAny,)
+    serializer_class = BoardSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Board.objects.filter(owner=user)
+```
+
 #### Detail view
 #### Lookup field
 #### Pagination
