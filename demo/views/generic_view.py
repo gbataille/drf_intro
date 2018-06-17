@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser, AllowAny
@@ -27,6 +28,9 @@ class BoardListView(generics.ListAPIView):
     permission_classes = (AllowAny,)
     serializer_class = BoardSerializer
     pagination_class = SmallResultsSetPagination
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    filter_fields = ('name',)
+    ordering_fields = ('id',)
 
     def get_queryset(self):
         user = self.request.user

@@ -261,6 +261,22 @@ class BoardListView(generics.ListAPIView):
 ```
 
 #### Filtering
+
+views/generic_view.py
+```python
+(...)
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics
+
+(...)
+
+class BoardListView(generics.ListAPIView):
+    (...)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    filter_fields = ('name',)
+    ordering_fields = ('id',)
+```
+
 #### Methods to override attributes
 
 **I want to view the user full name in the board API**
@@ -287,10 +303,6 @@ urls.py
 * Add custom RO field
 * Custom validation
 * Custom serialization / deserialization
-
-## Filtering
-
-## Pagination
 
 ## Throttling
 
