@@ -18,9 +18,11 @@ from django.contrib import admin
 
 from demo.views import naive
 from demo.views.rest_view import ListUsers
+from demo.views.generic_view import UserListGenericView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^naive_view/', naive.naive_view),
-    url(r'^rest/list_users/', ListUsers.as_view()),
+    url(r'^naive_view/$', naive.naive_view),
+    url(r'^rest/list_users/$', ListUsers.as_view()),
+    url(r'^generic/users/$', UserListGenericView.as_view()),
 ]

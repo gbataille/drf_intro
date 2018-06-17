@@ -75,7 +75,7 @@ from demo.views.rest_view import ListUsers
 
 (...)
 
-    url(r'^rest/list_users/', ListUsers.as_view()),
+    url(r'^rest/list_users/$', ListUsers.as_view()),
 ```
 
 Authentication and Permission framework
@@ -92,7 +92,8 @@ INSTALLED_APPS = (
 python manage.py migrate
 ```
 
-```views/rest_view.py
+views/rest_view.py
+```python
 from rest_framework import authentication
 
 class ListUsers(APIView):
@@ -102,16 +103,18 @@ class ListUsers(APIView):
 --> Why a tuple? Because methods are tried one after the other until one works
 --> Nothing changes?
 
-```views/rest_view.py
+views/rest_view.py
+```python
     def get(self, request, format=None):
         print(request.user)
 ```
 
---> We know have a user
+--> We now have a user
 
 #### Permissions
 
-```views/rest_view.py
+views/rest_view.py
+```python
 from rest_framework import authentication, permissions
 
 class ListUsers(APIView):
@@ -121,7 +124,8 @@ class ListUsers(APIView):
 
 --> side effect that I don't like: AnonymousUser is authenticated :(
 
-```views/rest_view.py
+views/rest_view.py
+```python
 from rest_framework import authentication, permissions
 
 class ListUsers(APIView):
@@ -133,8 +137,67 @@ class ListUsers(APIView):
 --> token
 --> 403
 
-### APIViews
-### APIViews
+### GenericViews
+
+views/generic_view.py
+```python
+from django.contrib.auth import get_user_model
+from rest_framework import generics
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAdminUser
+
+
+class UserListGenericView(generics.ListAPIView):
+    queryset = get_user_model().objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminUser,)
+```
+
+--> Maps to a model through a queryset
+--> still exhibits authentication and permissions
+--> Built from GenericApiView and mixins
+
+--> 500. Needs to explain how to serialize / deserialize the data
+
+models/serializers/user_serializer.py
+```python
+from django.contrib.auth import get_user_model
+
+from rest_framework import serializers
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'email')
+```
+
+views/generic_view.py
+```python
+class UserListGenericView(generics.ListAPIView):
+    (...)
+    serializer_class = UserSerializer
+```
+
+drf_prez/urls.py
+```python
+    (...)
+    url(r'^generic/users/$', UserListGenericView.as_view()),
+    (...)
+```
+
+#### Detail view
+#### Lookup field
+#### Pagination
+#### Filtering
+#### Methods to override attributes
+
+### Viewset
+
+#### Default actions
+#### Addtl actions - list_route
+#### Addtl actions - detail_route
 
 views/api.py
 ```python
@@ -179,11 +242,13 @@ urls.py
 
 ### Sub-resources
 
+### Renderers
+
 ## Conclusion
 
 * Nice framework, works well
 * As usual, great for school cases, but not so simple on real life applications
 * Complexity for sub-resources
-* Don't like the documentation approach
+* Don't like the documentation approach (changing!)
 ** Only real improvement in the last 2-3 releases
 ** Reinventing numerous things (openapi vs coreapi)
