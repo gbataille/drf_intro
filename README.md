@@ -306,7 +306,6 @@ class UserRetrieveGenericView(generics.RetrieveAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminUser,)
     serializer_class = UserSerializer
-    lookup_field = 'id'
 ```
 
 drf_prez/urls.py
@@ -317,6 +316,20 @@ drf_prez/urls.py
 ```
 
 #### Lookup field
+
+views/generic_view.py
+```python
+class UserRetrieveGenericView(generics.RetrieveAPIView):
+    (...)
+    lookup_field = 'email'
+```
+
+drf_prez/urls.py
+```python
+    (...)
+    url(r'^generic/users/(?P<email>.+)/$', UserRetrieveGenericView.as_view()),
+    (...)
+```
 
 ### Viewset
 

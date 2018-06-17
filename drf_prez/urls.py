@@ -25,6 +25,6 @@ urlpatterns = [
     url(r'^naive_view/$', naive.naive_view),
     url(r'^rest/list_users/$', ListUsers.as_view()),
     url(r'^generic/users/$', UserListGenericView.as_view()),
-    url(r'^generic/users/(?P<pk>[0-9]+)/$', UserRetrieveGenericView.as_view()),
+    url(r'^generic/users/(?P<email>.+)/$', UserRetrieveGenericView.as_view()),
     url(r'^generic/boards/$', BoardListView.as_view()),
 ]

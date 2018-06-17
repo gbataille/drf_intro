@@ -28,6 +28,7 @@ class UserRetrieveGenericView(generics.RetrieveAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminUser,)
     serializer_class = UserSerializer
+    lookup_field = 'email'
 
 
 class BoardListView(generics.ListAPIView):
