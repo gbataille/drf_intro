@@ -219,6 +219,23 @@ drf_prez/urls.py
     (...)
 ```
 
+**I want to view the user full name in the board API**
+
+models/serializers/board_serializer.py
+```python
+(...)
+class BoardSerializer(serializers.ModelSerializer):
+    owner_email = serializers.CharField(source='owner.email')
+    owner_full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Board
+        fields = ('id', 'name', 'owner_id', 'owner_email', 'owner_full_name')
+
+    def get_owner_full_name(self, board):
+        return "%s %s" % (board.owner.first_name, board.owner.last_name)
+```
+
 **I see everybody's board - not cool**
 
 
@@ -276,11 +293,6 @@ class BoardListView(generics.ListAPIView):
     filter_fields = ('name',)
     ordering_fields = ('id',)
 ```
-
-#### Methods to override attributes
-
-**I want to view the user full name in the board API**
-
 #### Detail view
 #### Lookup field
 
