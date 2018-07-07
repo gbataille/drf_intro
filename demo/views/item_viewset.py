@@ -6,11 +6,13 @@ from rest_framework.authentication import TokenAuthentication
 
 from demo.models.item import Item
 from demo.models.serializers.item_serializer import ItemSerializer, ItemDetailsSerializer
+from demo.views.generic_view import SmallResultsSetPagination
 
 
 class ItemViewset(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
     serializer_class = ItemSerializer
     authentication_classes = (TokenAuthentication,)
+    pagination_class = SmallResultsSetPagination
 
     def get_queryset(self):
         qs_filter = models.Q(owner__isnull=True)
