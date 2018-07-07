@@ -13,14 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import include, url
 from django.contrib import admin
 
+from rest_framework.routers import DefaultRouter
+
 from demo.views import naive
+from demo.views.item_viewset import ItemViewset
 from demo.views.rest_view import ListUsers
 from demo.views.generic_view import BoardListView, UserListGenericView, UserRetrieveGenericView
 
+
+router = DefaultRouter()
+router.register(r'items', ItemViewset, base_name='item')
+
 urlpatterns = [
+    url(r'^api/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^naive_view/$', naive.naive_view),
     url(r'^rest/list_users/$', ListUsers.as_view()),

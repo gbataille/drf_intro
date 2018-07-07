@@ -334,6 +334,52 @@ drf_prez/urls.py
 ### Viewset
 
 #### Default actions
+
+models/serializers/item_serializer.py
+```python
+from rest_framework import serializers
+
+from demo.models.item import Item
+
+
+class ItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Item
+        fields = ('id', 'board', 'title', 'description', 'owner')
+```
+
+views/item_viewset.py
+```python
+from rest_framework import viewsets
+
+from demo.models.item import Item
+from demo.models.serializers.item_serializer import ItemSerializer
+
+
+class ItemViewset(viewsets.ModelViewSet):
+    serializer_class = ItemSerializer
+    queryset = Item.objects.all()
+```
+
+drf_prez/urls.py
+```python
+    (...)
+    from django.conf.urls import include, url
+    (...)
+    from demo.views.item_viewset import ItemViewset
+    (...)
+
+
+    router = DefaultRouter()
+    router.register(r'items', ItemViewset, base_name='item')
+
+    urlpatterns = [
+        url(r'^api/', include(router.urls)),
+        (...)
+    ]
+```
+
 #### Addtl actions - list_route
 #### Addtl actions - detail_route
 
