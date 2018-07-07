@@ -497,35 +497,3 @@ tests.test_views.py
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('results', response.json())
 ```
-
-## Documentation
-
-## Serializers
-
-* Add custom RO field
-* Custom validation
-* Custom serialization / deserialization
-
-## Going Further
-
-### Custom authentication
-
-* Tying to the django user model
-
-### Custom permissions
-
-* Endpoint permission
-* Object level permission
-
-### Sub-resources
-
-### Renderers
-
-## Conclusion
-
-* Nice framework, works well
-* As usual, great for school cases, but not so simple on real life applications
-* Complexity for sub-resources
-* Don't like the documentation approach (changing!)
-** Only real improvement in the last 2-3 releases
-** Reinventing numerous things (openapi vs coreapi)
