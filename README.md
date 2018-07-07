@@ -417,14 +417,57 @@ class ItemViewset(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateM
 
 
 #### Addtl actions - list_route
-#### Addtl actions - detail_route
 
-views/api.py
+views/item_viewset.py
 ```python
+    (...)
+    from rest_framework import decorators, response, mixins, viewsets
+    (...)
+
+    class ItemViewset(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
+        (...)
+        @decorators.list_route(methods=['get'])
+        def random(self, request):
+            import random
+            items = list(self.get_queryset())
+            idx = random.randint(0, len(items) - 1)
+
+            return response.Response(ItemSerializer(instance=items[idx]).data)
 ```
 
-urls.py
+#### Addtl actions - detail_route
+
+views/item_viewset.py
 ```python
+    (...)
+    from demo.models.serializers.item_serializer import ItemSerializer, ItemDetailsSerializer
+    (...)
+
+    class ItemViewset(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
+        (...)
+        @decorators.detail_route(
+            methods=['get'],
+            serializer_class=ItemDetailsSerializer
+        )
+        def with_details(self, request, pk):
+            item = self.get_object()
+            return response.Response(self.get_serializer_class()(instance=item).data)
+```
+
+models/serializers/item_serializer.py
+```python
+class ItemDetailsSerializer(serializers.ModelSerializer):
+
+    board_name = serializers.CharField(source='board.name')
+    owner_email = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Item
+        fields = ('id', 'board_name', 'title', 'description', 'owner_email')
+
+    def get_owner_email(self, obj):
+        if obj.owner:
+            return obj.owner.email
 ```
 
 ## Serializers
