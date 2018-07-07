@@ -380,6 +380,42 @@ drf_prez/urls.py
     ]
 ```
 
+#### Limit actions
+
+views/item_viewset.py
+```python
+    from rest_framework import mixins, viewsets
+
+    (...)
+    class ItemViewset(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
+    (...)
+```
+
+#### Limit visibility
+
+views/item_viewset.py
+```python
+from django.db import models
+from django.contrib.auth.models import AnonymousUser
+
+from rest_framework import mixins, viewsets
+from rest_framework.authentication import TokenAuthentication
+
+(...)
+class ItemViewset(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.UpdateModelMixin):
+    serializer_class = ItemSerializer
+    authentication_classes = (TokenAuthentication,)
+
+    def get_queryset(self):
+        qs_filter = models.Q(owner__isnull=True)
+
+        if self.request.user and type(self.request.user) != AnonymousUser:
+            qs_filter = qs_filter | models.Q(owner=self.request.user)
+
+        return Item.objects.filter(qs_filter)
+```
+
+
 #### Addtl actions - list_route
 #### Addtl actions - detail_route
 
