@@ -472,25 +472,41 @@ class ItemDetailsSerializer(serializers.ModelSerializer):
             return obj.owner.email
 ```
 
+## Tests
+
+tests.test_views.py
+```python
+from rest_framework.reverse import reverse
+from rest_framework.test import APITestCase
+
+
+class SampleTest(APITestCase):
+
+    def test_something(self):
+        print(reverse('item-list'))
+        print(reverse('item-detail', args=[1]))
+        print(reverse('item-random'))
+```
+
+tests.test_views.py
+```python
+    def test_something(self):
+        response = self.client.get(
+            reverse('item-list')
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('results', response.json())
+```
+
+## Documentation
+
 ## Serializers
 
 * Add custom RO field
 * Custom validation
 * Custom serialization / deserialization
 
-## Throttling
-
-## Tests
-
-## Documentation
-
 ## Going Further
-
-### View custom logic
-
-* list_route/detail_route
-* get_object
-* serializer handling, pagination handling
 
 ### Custom authentication
 
